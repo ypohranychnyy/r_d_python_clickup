@@ -1,0 +1,34 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: circleci/python:3.12
+    working_directory: ~/repo
+
+jobs:
+  test:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: Run Tests
+          command: |
+            . venv/bin/activate
+            pytest --junitxml=test-results/results.xml --html=report.html
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: report.html
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
