@@ -1,26 +1,24 @@
 version: 2.1
 
+executors:
+  python-executor:
+    docker:
+      - image: circleci/python:3.10.1-node-browsers  # Change Python version to a supported one
+    working_directory: ~/repo
+
 jobs:
   python-job:
-    docker:
-      - image: circleci/python:3.10  # Changed to a stable version that is available
+    executor: python-executor
     steps:
       - checkout
       - run:
           name: set up venv
           command: |
-            python -m venv venv
-            . venv/bin/activate
-      - run:
-          name: install dependencies
-          command: |
-            . venv/bin/activate
-            pip install -r requirements.txt
+            python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
-            pytest --html=./report/report.html --self-contained-html
+            source venv/bin/activate && pytest --html=./report/report.html --self-contained-html
       - store_artifacts:
           path: report/
           destination: python-report
