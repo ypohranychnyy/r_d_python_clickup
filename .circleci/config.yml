@@ -7,28 +7,33 @@ executors:
     working_directory: ~/repo
 
 jobs:
-  test:
+  python-job:
     executor: python-executor
     steps:
       - checkout
       - run:
-          name: Install Dependencies
+          name: Set up venv
           command: |
             python -m venv venv
             . venv/bin/activate
-            pip install -r requirements.txt
       - run:
-          name: Run Tests
+          name: Install dependencies
           command: |
             . venv/bin/activate
-            pytest --junitxml=test-results/results.xml --html=report.html
+            pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            pytest --html=./report/report.html --self-contained-html --junitxml=./test-results/results.xml
       - store_test_results:
-          path: test-results
+          path: ./test-results
       - store_artifacts:
-          path: report.html
+          path: ./report.html
+          destination: python-report
 
 workflows:
   version: 2
-  test:
+  build-and-test:
     jobs:
-      - test
+      - python-job
