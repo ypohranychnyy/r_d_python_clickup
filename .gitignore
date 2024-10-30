@@ -1,0 +1,12 @@
+# Ignore environment settings
+.env
+
+# Ignore virtual environments
+venv/
+
+# IDE config
+.idea/
+
+# Python cache
+__pycache__/
+*.pyc
